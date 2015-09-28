@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+                android:id="@+id/activity_mainmenu">
+
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="307dp"
+            android:id="@+id/itemListView" android:layout_below="@+id/hubTitleTextView"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Staff Hub"
+            android:id="@+id/hubTitleTextView" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dispatch"
+            android:id="@+id/dispatchButton"
+            android:onClick="dispatchButtonClicked"
+            android:layout_below="@+id/itemListView" android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wrong Item Test"
+            android:id="@+id/wrongItemButton"
+            android:onClick="wrongItemButtonClicked"
+            android:layout_below="@+id/dispatchButton"
+            android:layout_alignEnd="@+id/hubTitleTextView"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/itemsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="100px" android:layout_below="@+id/wrongItemButton"
+            android:layout_alignParentStart="true" android:layout_alignParentBottom="true">
+
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>

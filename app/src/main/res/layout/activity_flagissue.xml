@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:id="@+id/activity_flagissue"
+              android:background="#80FFFFFF">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Flag Issue"
+            android:id="@+id/titleTextView" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="42dp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/issueEditText" android:layout_below="@+id/titleTextView" android:layout_centerHorizontal="true"
+            android:layout_marginTop="110dp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/emailText"
+            android:hint="email address"
+            android:layout_alignBottom="@+id/issueEditText" android:layout_alignStart="@+id/issueEditText"
+            android:layout_marginBottom="53dp"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Issue"
+            android:id="@+id/sendIssueButton" android:layout_below="@+id/issueEditText" android:layout_alignStart="@+id/issueEditText"/>
+</RelativeLayout>
