@@ -3,6 +3,7 @@ package com.sky.pinkvelocity.warehouse.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -55,5 +56,15 @@ public class ErrorPopUpActivity extends Activity {
     public String getItemId(){
 
         return itemId;
+    }
+
+
+    public void errorCloseButtonClicked(View v){
+
+        if(v.getId()==R.id.errorCloseButton){
+
+            //Close Window Here
+        }
+
     }
 }

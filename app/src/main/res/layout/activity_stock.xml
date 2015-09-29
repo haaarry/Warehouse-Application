@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:id="@+id/activity_stock">
+              android:id="@+id/activity_stock" android:weightSum="1">
 
 
-
-</LinearLayout>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="178dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Please scan recieved order"
+            android:id="@+id/stockScanItemTextView" android:layout_gravity="center_horizontal" android:layout_weight="0.38"
+            android:layout_row="0" android:layout_column="0"
+            android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm Correct"
+            android:id="@+id/confirmStockButton"
+            android:onClick="confirmStockButtonClicked"
+            android:layout_below="@+id/stockScanItemTextView" android:layout_centerHorizontal="true"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Incorrect"
+            android:id="@+id/incorrectStockButton"
+            android:onClick="incorrectStockButtonClicked"
+            android:layout_below="@+id/confirmStockButton" android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Adding Stock"
+            android:id="@+id/addStockTitleTextView" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
+</RelativeLayout>

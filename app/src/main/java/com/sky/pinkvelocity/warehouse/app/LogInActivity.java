@@ -112,6 +112,12 @@ public class LogInActivity extends Activity {
 
     }
 
+    public void stockActivityButtonClicked(View v){
+        if(v.getId()== R.id.stockActivityButton){
+            Intent intent = new Intent(this, StockActivity.class);
+            startActivity(intent);
+        }
 
+    }
 
 }

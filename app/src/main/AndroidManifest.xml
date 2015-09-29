@@ -47,6 +47,9 @@
         <activity android:name=".StockActivity"
                   android:label="@string/app_name">
         </activity>
+        <activity android:name=".IncorrectStockActivity"
+                  android:label="@string/app_name">
+        </activity>
     </application>
 
 </manifest>

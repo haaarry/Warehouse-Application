@@ -34,7 +34,7 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
 
     private ItemRecyclerAdapter myAdapter;
 
-    String urlAddress = "http://10.0.2.2:8080/";
+    String urlAddress = "http://localhost:8080/";
 
 
     // "http://localhost:8080/";
@@ -113,7 +113,7 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
             case R.id.action_settings:
                 return true;
             case R.id.action_requestorders:
-                String itemGet = "http://httpbin.org/ip";//urlAddress+"order/get/six";
+                String itemGet = urlAddress+"order/get/six";
                 RetrieveHTTPDataAsync retrieveBlogData = new RetrieveHTTPDataAsync(this);
                 retrieveBlogData.execute(itemGet);
             default:
