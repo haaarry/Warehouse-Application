@@ -39,10 +39,13 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         ItemInfo current = data.get(position);
-
+        String quant = "" +current.quantity;
         holder.itemTV.setText(current.itemName);
         holder.imageV.setImageResource(current.iconId);
         holder.locationTV.setText(current.location);
+
+        holder.quantityTV.setText(quant);//Set to quantity//THIS COULD BREAK IT
+        //holder.quantityTV.setText(current.quantity.toString());
 
     }
 
@@ -51,22 +54,31 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         return data.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
         TextView itemTV;
         TextView locationTV;
         ImageView imageV;
+        TextView quantityTV;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             itemTV = (TextView) itemView.findViewById(R.id.itemRecyclerText);
             imageV = (ImageView) itemView.findViewById(R.id.listIcon);
             locationTV =(TextView) itemView.findViewById(R.id.itemLocationRecyclerText);
-            imageV.setOnClickListener(this);
+            imageV.setOnLongClickListener(this);
+            quantityTV = (TextView) itemView.findViewById(R.id.itemQuantTextView);
         }
 
+//        @Override
+//        public void onClick(View v) {
+//            Toast.makeText(context, ""+getPosition(), Toast.LENGTH_SHORT).show();
+//        }
+
         @Override
-        public void onClick(View v) {
-            Toast.makeText(context, ""+getPosition(), Toast.LENGTH_SHORT).show();
+        public boolean onLongClick(View v) {
+
+
+            return false;
         }
     }
 }

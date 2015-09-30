@@ -11,6 +11,7 @@ public class ItemInfo {
     int iconId;
     String location;
     String productTypeId;
+    int quantity;
 
 
 }

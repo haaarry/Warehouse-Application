@@ -41,11 +41,7 @@ public class FlagIssuePopUpActivity extends Activity implements OnRetrieveHttpDa
     public void issueButtonClicked(View v){
         if(v.getId()==R.id.sendIssueButton){
             String message = issueEditText.getText().toString();
-
-
-
             //send issue logic here
-
         }
 
     }

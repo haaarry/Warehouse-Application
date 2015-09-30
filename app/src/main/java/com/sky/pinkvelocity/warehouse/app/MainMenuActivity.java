@@ -48,13 +48,13 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
 
     private ItemRecyclerAdapter myAdapter;
 
-    String urlAddress = "http://172.16.5.84:8080/customer/order/pick";//(Jo's)//10.128.3.73
-    String urlStatic = "http://172.16.5.84:8080";//"http://10.128.3.73:8080";
+    //String urlAddress = "http://172.16.5.84:8080/customer/order/pick";//(Jo's)//10.128.3.73
+    String urlStatic ="http://10.128.3.73:8080"; //"http://172.16.5.84:8080";//"http://10.128.3.73:8080";
 
 
     // "http://localhost:8080/";
 
-
+    boolean orderErrors= false;
     PopupWindow flagIssuePopup;
     //ListView itemList;
     ArrayList<String> items;
@@ -63,23 +63,25 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
     MediaPlayer beepFail;
     RelativeLayout mLayout;
     ErrorPopUpActivity errorMess;
-    Order order;
     String mockJSON;
     TextView titltTextView;
     List<ItemInfo> data;
-
+    String orderNumber = "";
     RecyclerView itemRV;
     ArrayAdapter<String> arrayAdapter;
+
+    List<String>orderErrorsList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+        orderErrorsList = new ArrayList<String>();
 
         mockJSON = "{\"orderNumber\":1,\"dateOrderPlaced\":{\"centuryOfEra\":20,\"yearOfEra\":2015,\"yearOfCentury\":15,\"weekyear\":2015,\"monthOfYear\":9,\"weekOfWeekyear\":40,\"hourOfDay\":13,\"minuteOfHour\":27,\"secondOfMinute\":38,\"millisOfSecond\":983,\"millisOfDay\":48458983,\"secondOfDay\":48458,\"minuteOfDay\":807,\"year\":2015,\"dayOfMonth\":30,\"dayOfWeek\":3,\"era\":1,\"dayOfYear\":273,\"zone\":{\"uncachedZone\":{\"cachable\":true,\"fixed\":false,\"id\":\"Europe/London\"},\"fixed\":false,\"id\":\"Europe/London\"},\"millis\":1443616058983,\"chronology\":{\"zone\":{\"uncachedZone\":{\"cachable\":true,\"fixed\":false,\"id\":\"Europe/London\"},\"fixed\":false,\"id\":\"Europe/London\"}},\"afterNow\":false,\"beforeNow\":true,\"equalNow\":false},\"productsOrdered\":{\"ProductId: 1, name String name, imageUrl String imageUrl, shelf null, row null\":100,\"ProductId: 1, name Gnome, imageUrl String imageUrl, shelf null, row null\":200,\"ProductId: 1, name Remote, imageUrl String imageUrl, shelf null, row null\":300},\"productsDelivered\":{},\"totalPrice\":10,\"customer\":{\"firstName\":null,\"address\":\"null null null null null\",\"titleAndFullName\":\"null null null\",\"orders\":null},\"dispatchedProducts\":{\"ProductId: 1, name String name, imageUrl String imageUrl, shelf null, row null\":{\"2015-09-30T13:27:39.104+01:00\":5}},\"deliveredProducts\":{}}";
 
-        titltTextView = (TextView)findViewById(R.id.hubTitleTextView);
+        titltTextView = (TextView)findViewById(R.id.orderNumberTextView);
 
         beepSuccess = MediaPlayer.create(this, R.raw.scanbeep);
         beepFail = MediaPlayer.create(this, R.raw.scanerror);
@@ -90,28 +92,13 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
         errorMess = new ErrorPopUpActivity();
 
 
+        //itemRV.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         itemRV = (RecyclerView) findViewById(R.id.itemsRecyclerView);
         itemRV.setAdapter(myAdapter);
         itemRV.setLayoutManager(new LinearLayoutManager(this));
-
+        itemRV.addItemDecoration(new SimpleDividerItemDecoration(this));
 
         listFiller();
-
-       //arrayAdapter =
-                //new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, items);
-        // Set The Adapter
-        //itemList.setAdapter(arrayAdapter);
-
-
-//        itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            // argument position gives the index of item which is clicked
-//            public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-//
-//                String selectedItem = items.get(position);
-//
-//                removeItem(selectedItem);
-//            }
-//        });
 
         dispatchButton.setClickable(false);
         dispatchButton.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
@@ -135,17 +122,15 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
                 startActivity(new Intent(MainMenuActivity.this, FlagIssuePopUpActivity.class));
                 return true;
             case R.id.action_settings:
+                sortData(mockJSON);
                 return true;
             case R.id.action_requestorders:
-                String itemGet = urlAddress;//+"customer/order/get/six";
+                String itemGet = urlStatic +"/customer/order/pick";
                 RetrieveHTTPDataAsync retrieveOrderData = new RetrieveHTTPDataAsync(this);
                 retrieveOrderData.execute(itemGet);
-                //Toast.makeText(this, order.getTotalPrice().toString(), Toast.LENGTH_SHORT).show();
-                //getOrder();
-                //sortData(mockJSON);
                 return true;
             case R.id.action_post:
-                postOrders();
+                //postOrders();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -155,40 +140,51 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
     public void dispatchButtonClicked(View v){
         if(v.getId() == R.id.dispatchButton){
             Toast.makeText(this, "Dispatch request sent", Toast.LENGTH_SHORT).show();
+
+
+            postOrders(orderErrorsList, orderNumber);
+            titltTextView.setText("");
         }
     }
 
     public void removeItem(String selectedItem){
 
         for(int i=0; i < data.size(); i++){
+
+
+
             ItemInfo tempItem = data.get(i);
             String n = tempItem.productTypeId.trim();
             if(n.equals(selectedItem)){
-                data.remove(i);
-                myAdapter.notifyItemRemoved(i);
+
+                data.get(i).quantity--;
+                //tempItem.quantity--;
+                myAdapter.notifyDataSetChanged();
+                if(tempItem.quantity == 0){
+                    data.remove(i);
+                    myAdapter.notifyItemRemoved(i);
+                }
                 if(data.size() == 0){
                     dispatchButton.setClickable(true);
                     dispatchButton.getBackground().setColorFilter(null);
                 }
                 break;
-            }else if(i == items.size()-1 && !n.equals(selectedItem)) {
+            }else if(i == data.size()-1 && !n.equals(selectedItem)) {
                 errorMessage(selectedItem);
-            }else if(items.size()==0){
+            }else if(data.size()==0){
                 Toast.makeText(this, "No more items in your order list!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void errorMessage(String selectedItem) {
-        beepFail.seekTo(0);
-        beepFail.start();
 
         errorMess.setErrorString("Item not in list.");
         errorMess.setItemIdInt(selectedItem);
 
         mLayout.setBackgroundColor(Color.GRAY);
         startActivity(new Intent(MainMenuActivity.this, ErrorPopUpActivity.class));
-    }
+}
 
 
     public void listFiller(){
@@ -199,121 +195,115 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        PendingIntent intent = PendingIntent.getActivity(this, 0, new
-                        Intent(
-                        this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                0);
-        NfcAdapter.getDefaultAdapter(this).enableForegroundDispatch(this,
-                intent, null, null);
-
-        mLayout.setBackgroundColor(Color.WHITE);
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        PendingIntent intent = PendingIntent.getActivity(this, 0, new
+//                        Intent(
+//                        this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+//                0);
+//        NfcAdapter.getDefaultAdapter(this).enableForegroundDispatch(this,
+//                intent, null, null);
+//
+//        mLayout.setBackgroundColor(Color.WHITE);
+//    }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
-        Parcelable[] parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-
-        if(parcelables != null && parcelables.length > 0)
-        {
-            readTextFromMessage((NdefMessage) parcelables[0]);
-        }else{
-            Toast.makeText(this, "No NDEF messages found!", Toast.LENGTH_SHORT).show();
-        }
+//
+//        Parcelable[] parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+//
+//        if(parcelables != null && parcelables.length > 0)
+//        {
+//            readTextFromMessage((NdefMessage) parcelables[0]);
+//        }else{
+//            Toast.makeText(this, "No NDEF messages found!", Toast.LENGTH_SHORT).show();
+//        }
     }
 
-    private void readTextFromMessage(NdefMessage ndefMessage) {
-        beepSuccess.seekTo(0);
-        NdefRecord[] ndefRecords = ndefMessage.getRecords();
+//    private void readTextFromMessage(NdefMessage ndefMessage) {
+//        beepSuccess.seekTo(0);
+//        NdefRecord[] ndefRecords = ndefMessage.getRecords();
+//
+//        if(ndefRecords != null && ndefRecords.length>0){
+//
+//            NdefRecord ndefRecord = ndefRecords[0];
+//
+//            String tagContent = getTextFromNdefRecord(ndefRecord);
+//
+//            removeItem(tagContent);
+//
+//        }else
+//        {
+//            Toast.makeText(this, "No NDEF records found!", Toast.LENGTH_SHORT).show();
+//        }
+//
+//    }
 
-        if(ndefRecords != null && ndefRecords.length>0){
-
-            NdefRecord ndefRecord = ndefRecords[0];
-
-            String tagContent = getTextFromNdefRecord(ndefRecord);
-
-            removeItem(tagContent);
-
-        }else
-        {
-            Toast.makeText(this, "No NDEF records found!", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    public String getTextFromNdefRecord(NdefRecord ndefRecord)
-    {
-        String tagContent = null;
-        try {
-            byte[] payload = ndefRecord.getPayload();
-            String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
-            int languageSize = payload[0] & 0063;
-            tagContent = new String(payload, languageSize + 1,
-                    payload.length - languageSize - 1, textEncoding);
-        } catch (UnsupportedEncodingException e) {
-            Log.e("getTextFromNdefRecord", e.getMessage(), e);
-        }
-        return tagContent;
-    }
-
-
-
-
-    public void wrongItemButtonClicked(View v){
-        if(v.getId()==R.id.wrongItemButton) {
-
-            removeItem("WRONG ITEM");
-        }
-    }
+//    public String getTextFromNdefRecord(NdefRecord ndefRecord)
+//    {
+//        String tagContent = null;
+//        try {
+//            byte[] payload = ndefRecord.getPayload();
+//            String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
+//            int languageSize = payload[0] & 0063;
+//            tagContent = new String(payload, languageSize + 1,
+//                    payload.length - languageSize - 1, textEncoding);
+//        } catch (UnsupportedEncodingException e) {
+//            Log.e("getTextFromNdefRecord", e.getMessage(), e);
+//        }
+//        return tagContent;
+//    }
 
 
 
 
 
-    public void postOrders(){
+
+
+    public void postOrders(final List<String> errors, final String orderNo){
         Thread post = new Thread(new Runnable(){
-
-
             @Override
             public void run(){
                 try
                 {
-
-                    String [] mockPost = {"1", "33", "10"};
-                    JSONArray mockJsonArray = new JSONArray(mockPost);
-                    JSONObject mockPostJson = new JSONObject();
-                    String mockPostString = "U AWIGHT?";//Arrays.toString(mockPost);
-
-                    mockPostJson.put("Mock",mockPostString);
-
-
                     String postResponse = "";
+                    String [] mockPost = {"1", "33", "10"};
 
 
                     HttpClient httpclient = new DefaultHttpClient();
-                    HttpPost httppostreq = new HttpPost(urlStatic+"/customer/order/dispatched");//("http://172.16.5.84:8080/customer/order/dispatched");
 
-                    StringEntity se = new StringEntity(mockJsonArray.toString());
-                    se.setContentType("application/json;charset=UTF-8");
-                    se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
+                    if(orderErrors){
+                        HttpPost httppostreq = new HttpPost(urlStatic+"/customer/order/dispatched");
 
+                        StringEntity se = new StringEntity(mockPost.toString());
+                        se.setContentType("application/json;charset=UTF-8");
+                        se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
+                        httppostreq.setEntity(se);
 
+                        HttpResponse httpresponse = httpclient.execute(httppostreq);
 
-                    httppostreq.setEntity(se);
+                        postResponse = EntityUtils.toString(httpresponse.getEntity());
+                        showToast(postResponse);
 
-                    HttpResponse httpresponse = httpclient.execute(httppostreq);
+                    }else{
+                        HttpPost httppostreq = new HttpPost(urlStatic+"/customer/order/dispatched/errors");
 
-                    postResponse = EntityUtils.toString(httpresponse.getEntity());
-                    showToast(postResponse);
-                    //Toast.makeText(getApplicationContext(), postResponse, Toast.LENGTH_SHORT).show();
+                        StringEntity se = new StringEntity(orderNo);
+                        se.setContentType("application/json;charset=UTF-8");
+                        se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
+                        httppostreq.setEntity(se);
+
+                        HttpResponse httpresponse = httpclient.execute(httppostreq);
+
+                        postResponse = EntityUtils.toString(httpresponse.getEntity());
+                        showToast(postResponse);
+                    }
                 }catch(Exception e){
 
-                    String whatevs = e.toString();
+                    String ew = e.toString();
                 }
             }
 
@@ -354,8 +344,6 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
     public void sortData(String data){
         List<String> productName = new ArrayList<String>();
         List<String> productQuantity = new ArrayList<String>();
-        String orderNumber = "";
-
         try {
             JSONObject orderObject = new JSONObject(mockJSON);
             orderNumber = orderObject.getString("orderNumber");
@@ -399,16 +387,18 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
 
         //int[] icons ={R.drawable.logo,R.drawable.logo, R.drawable.logo, R.drawable.logo, R.drawable.logo};
         //String[] itemTitles={"item 1","item 1","item 1","item 1","item 1"};
-        titltTextView.setText("Order Number: "+ orderNumber);
+        titltTextView.setText("Order Number: " + orderNumber);
 
         for(int i=0; i<productName.size(); i++){
             ItemInfo current = new ItemInfo();
             String productInfo = productName.get(i);
             String[] productInfoSplit = productInfo.split(",");
             String[] productId = productInfoSplit[0].split(":");
+            //String quant = productQuantity.get(i);
 
 
-            current.location = productInfoSplit[0] + "Location: " + productInfoSplit[3]+productInfoSplit[4];
+            current.quantity = Integer.parseInt(productQuantity.get(i));
+            current.location = productInfoSplit[0] + "\nLocation: " + productInfoSplit[3]+productInfoSplit[4];
             current.iconId= R.drawable.logo;
             current.itemName = productInfoSplit[1];
             current.productTypeId = productId[1].trim();
@@ -416,6 +406,11 @@ public class MainMenuActivity extends Activity implements OnRetrieveHttpData{
         }
 
         return data;
+    }
+
+    public void TestClicked(View v){
+
+        removeItem("1");
     }
 
 }
