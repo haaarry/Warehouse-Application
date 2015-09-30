@@ -16,5 +16,9 @@
           android:title="@string/action_requestorders"
           android:orderInCategory="300"
           android:showAsAction="never"/>
+    <item android:id="@+id/action_post"
+          android:title="@string/action_post"
+          android:orderInCategory="300"
+          android:showAsAction="never"/>
 
 </menu>

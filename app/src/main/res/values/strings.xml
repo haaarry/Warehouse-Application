@@ -4,5 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_flagissue">Flag Issue</string>
     <string name="action_settings">Settings</string>
+    <string name="action_post">Post</string>
     <string name="action_requestorders">Request Items</string>
 </resources>

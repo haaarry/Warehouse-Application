@@ -3,13 +3,9 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
                 android:id="@+id/activity_mainmenu">
 
-    <ListView
-            android:layout_width="match_parent"
-            android:layout_height="307dp"
-            android:id="@+id/itemListView" android:layout_below="@+id/hubTitleTextView"
-            android:layout_alignParentStart="true"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,8 +18,8 @@
             android:text="Dispatch"
             android:id="@+id/dispatchButton"
             android:onClick="dispatchButtonClicked"
-            android:layout_below="@+id/itemListView" android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true" android:layout_below="@+id/hubTitleTextView"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,8 +32,9 @@
     <android.support.v7.widget.RecyclerView
             android:id="@+id/itemsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="100px" android:layout_below="@+id/wrongItemButton"
-            android:layout_alignParentStart="true" android:layout_alignParentBottom="true">
+            android:layout_height="5000px"
+            android:layout_below="@+id/hubTitleTextView"
+            >
 
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>

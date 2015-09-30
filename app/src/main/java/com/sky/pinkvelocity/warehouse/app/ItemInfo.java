@@ -9,8 +9,8 @@ public class ItemInfo {
 
     String itemName;
     int iconId;
-    String productCode;
-    int productTypeId;
+    String location;
+    String productTypeId;
 
 
 }

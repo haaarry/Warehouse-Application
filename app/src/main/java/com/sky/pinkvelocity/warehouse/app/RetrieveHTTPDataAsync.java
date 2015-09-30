@@ -40,6 +40,7 @@ public class RetrieveHTTPDataAsync extends AsyncTask<String, Void, String> {
         listener.onTaskCompleted(httpData);
     }
 
+
     public String getHTTPData(String url){
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
@@ -63,8 +64,5 @@ public class RetrieveHTTPDataAsync extends AsyncTask<String, Void, String> {
         String dataString =  builder.toString();
 
         return dataString;
-
-
-
     }
 }
